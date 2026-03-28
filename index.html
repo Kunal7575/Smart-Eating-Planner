@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Eating Planner v2</title>
+
+  <!-- U of G required fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- U of G web components stylesheet -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@uoguelph/web-components@2.x.x/dist/uofg-web-components/uofg-web-components.css"
+  />
+
+  <!-- U of G web components -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/@uoguelph/web-components@2.x.x/dist/uofg-web-components/uofg-header.esm.js"
+    type="module"
+  ></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@uoguelph/web-components@2.x.x/dist/uofg-web-components/uofg-footer.esm.js"
+    type="module"
+  ></script>
+
+  <style>
+    :root {
+      --page-bg: var(--uog-color-grey-light-bg, #f5f5f5);
+      --surface: var(--uog-color-white, #fff);
+      --surface-muted: var(--uog-color-grey-light-bg, #f5f5f5);
+
+      --text: var(--uog-color-body-copy, #555);
+      --text-strong: var(--uog-color-body-copy-bold, #333);
+
+      --primary: var(--uog-color-blue, #187bb4);
+      --primary-hover: var(--uog-color-blue-focus, #135f8b);
+      --primary-contrast: var(--uog-color-blue-contrast, #fff);
+
+      --secondary: var(--uog-color-grey-dark-bg, #222);
+      --secondary-hover: var(--uog-color-black-focus, #444);
+      --secondary-contrast: var(--uog-color-grey-dark-contrast, #fff);
+
+      --border: var(--uog-color-grey-light-focus, #bfbfbf);
+      --divider: var(--uog-color-grey-light-focus, #bfbfbf);
+
+      --warning-bg: var(--uog-color-yellow, #ffc429);
+      --warning-border: var(--uog-color-yellow-focus, #ffe299);
+      --warning-text: var(--uog-color-yellow-contrast, #000);
+
+      --link: var(--uog-color-body-copy-link, #187bb4);
+
+      --shadow-soft: 0 1rem 2.4rem rgba(0, 0, 0, 0.06);
+      --focus-ring: 0 0 0 0.3rem rgba(24, 123, 180, 0.15);
+    }
+
+    html {
+      font-size: 62.5%;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .uofg-back-to-top {
+      position: fixed;
+      right: 1.6rem;
+      bottom: 1.6rem;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 4.8rem;
+      height: 4.8rem;
+      padding: 0.8rem;
+      border: 1px solid var(--uog-color-white, #fff);
+      border-radius: 9999px;
+      background: var(--uog-color-black, #000);
+      color: var(--uog-color-white, #fff);
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.18);
+      transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    }
+
+    .uofg-back-to-top svg {
+      width: 1.8rem;
+      height: 1.8rem;
+    }
+
+    .uofg-back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .uofg-back-to-top:hover {
+      background: var(--uog-color-red, #e51937);
+      color: var(--uog-color-red-contrast, #fff);
+      transform: translateY(-2px);
+    }
+
+    .uofg-back-to-top:focus,
+    .uofg-back-to-top:focus-visible {
+      outline: 3px solid var(--uog-color-yellow-focus, #ffe299);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 640px) {
+      .uofg-back-to-top {
+        right: 1.4rem;
+        bottom: 1.4rem;
+        width: 4.4rem;
+        height: 4.4rem;
+      }
+
+      .uofg-back-to-top svg {
+        width: 1.6rem;
+        height: 1.6rem;
+      }
+    }
+ 
+    body {
+      margin: 0;
+      font-family: "DM Sans", Arial, sans-serif;
+      background: var(--page-bg);
+      color: var(--text);
+    }
+    
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: "Bitter", serif;
+      margin-top: 0;
+      color: var(--text-strong);
+    }
+
+    a {
+      color: var(--link);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 5rem auto 3rem auto;
+      padding: 0 2rem 2rem;
+    }
+
+    .page-title {
+      margin-bottom: 0.8rem;
+      font-size: 5.2rem;
+      line-height: 1.1;
+      color: var(--text-strong);
+    }
+
+    .subtitle {
+      margin-top: 0;
+      margin-bottom: 2.4rem;
+      color: var(--text);
+      font-size: 2rem;
+      line-height: 1.45;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 34rem 1fr;
+      gap: 2.2rem;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 1.8rem;
+      padding: 2rem;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border);
+    }
+
+    label {
+      display: block;
+      margin: 1.4rem 0 0.6rem;
+      font-weight: 700;
+      font-size: 1.4rem;
+      font-family: "DM Sans", Arial, sans-serif;
+      color: var(--text-strong);
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 1.2rem 1.4rem;
+      font-size: 1.4rem;
+      border-radius: 1.2rem;
+      font-family: "DM Sans", Arial, sans-serif;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary-hover);
+      box-shadow: var(--focus-ring);
+    }
+
+    .action-group {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1.6rem;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 1.2rem 1.4rem;
+      font-size: 1.4rem;
+      border-radius: 1.2rem;
+      font-family: "DM Sans", Arial, sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:focus {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--primary-contrast);
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: var(--secondary-contrast);
+    }
+
+    .btn-secondary:hover,
+    .btn-secondary:focus {
+      background: var(--secondary-hover);
+    }
+
+    .summary {
+      background: var(--uog-color-white, #fff);
+      border: 1px solid var(--uog-color-blue, #187bb4);
+      border-top: 0.6rem solid var(--uog-color-blue, #187bb4);
+      border-radius: 1.6rem;
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      margin-bottom: 1.8rem;
+    }
+
+    .summary-header {
+      background: rgba(24,123,180,0.12);
+      padding: 1.4rem 1.6rem 1rem;
+      border-bottom: 1px solid var(--uog-color-blue);
+    }
+
+    .summary-title {
+      margin: 0;
+      font-size: 2rem;
+      font-family: "Bitter", serif;
+      color: var(--uog-color-body-copy-bold, #333);
+    }
+
+    .summary-body {
+      padding: 1.6rem;
+      font-size: 1.6rem;
+      color: var(--uog-color-body-copy, #555);
+      line-height: 1.6;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1.2rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--uog-color-grey-light-bg, #f5f5f5);
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-label {
+      color: var(--uog-color-body-copy, #555);
+    }
+
+    .summary-value {
+      font-weight: 700;
+      color: var(--uog-color-blue);
+    }
+
+    .grid-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.8rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(29rem, 1fr));
+      gap: 1.6rem;
+    }
+
+    .day-card {
+      border: 1px solid var(--border);
+      border-radius: 1.6rem;
+      padding: 1.6rem;
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+      border-top: 4px solid var(--uog-color-yellow);
+    }
+
+    .day-card h3 {
+      margin-bottom: 1.2rem;
+      font-size: 2.4rem;
+      color: var(--text-strong);
+    }
+
+    .meal-block {
+      background: var(--surface-muted);
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+    }
+
+    .meal-block h4 {
+      margin: 0 0 0.8rem;
+      font-size: 1.7rem;
+      color: var(--text-strong);
+    }
+
+    .meal-name {
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      font-size: 1.5rem;
+      font-family: "DM Sans", Arial, sans-serif;
+      color: var(--text-strong);
+    }
+
+    .meta {
+      font-size: 1.3rem;
+      color: var(--text);
+      line-height: 1.45;
+      font-family: "DM Sans", Arial, sans-serif;
+    }
+
+    .grocery-card,
+    .nutrition-card {
+      border: 1px solid var(--border);
+      border-radius: 1.6rem;
+      padding: 1.6rem;
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .grocery-card h3,
+    .nutrition-card h3 {
+      margin-bottom: 1.2rem;
+      font-size: 2.2rem;
+      color: var(--text-strong);
+    }
+
+    .grocery-list {
+      display: grid;
+      gap: 0.8rem;
+      max-height: 42rem;
+      overflow-y: auto;
+    }
+
+    .grocery-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 1px solid var(--divider);
+      padding-bottom: 0.8rem;
+      font-size: 1.4rem;
+      font-family: "DM Sans", Arial, sans-serif;
+      color: var(--text);
+    }
+
+    .nutrition-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .nutrition-box {
+      background: var(--uog-color-grey-light-bg);
+      border: 1px solid var(--uog-color-grey-light-focus);
+      border-left: 4px solid var(--uog-color-blue);
+    }
+    .grocery-item:nth-child(even) {
+      background: rgba(0,0,0,0.03);
+    }
+    .muted {
+      color: var(--text);
+      font-size: 1.3rem;
+      font-family: "DM Sans", Arial, sans-serif;
+    }
+
+    .alert-warning {
+      background: var(--warning-bg);
+      color: var(--warning-text);
+      border: 1px solid var(--warning-border);
+      border-radius: 1.2rem;
+      padding: 1.4rem;
+      margin-top: 1.2rem;
+      font-size: 1.4rem;
+      font-family: "DM Sans", Arial, sans-serif;
+    }
+
+    .alert-title {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 1.5rem;
+      color: inherit;
+    }
+
+    @media (max-width: 1000px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-top {
+        grid-template-columns: 1fr;
+      }
+
+      .page-title {
+        font-size: 4rem;
+      }
+
+      .subtitle {
+        font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        margin-top: 3.2rem;
+        padding: 0 1.4rem 2rem;
+      }
+
+      .page-title {
+        font-size: 3.2rem;
+      }
+
+      .nutrition-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <uofg-header
+    page-title="Student Planning Tools"
+    page-url="#example"
+  >
+    <a href="https://costcalculator3.netlify.app/">
+      Cost Calculator
+    </a>
+    <a href="/">
+      Eating Plan
+    </a>
+    <!-- <ul data-title="Example Menu">
+      <li>
+        <a href="#example">
+          Example Menu Link 1
+        </a>
+      </li>
+      <li>
+        <a href="#example">
+          This is a really long Example Menu Link 2
+        </a>
+      </li>
+      <li>
+        <a href="#example">
+          Example Menu Link 3
+        </a>
+      </li>
+    </ul> -->
+  </uofg-header>
+
+  <main class="container">
+    <h1 class="page-title">Smart Eating Planner</h1>
+    <p class="subtitle">
+      Weekly planner with breakfast, lunch, dinner, grocery list, cost estimate, and nutrition summary.
+    </p>
+
+    <div class="layout">
+      <aside class="card">
+        <label for="budget">Weekly Budget ($)</label>
+        <input type="number" id="budget" min="10" step="1" value="50" />
+
+        <label for="goal">Goal</label>
+        <select id="goal">
+          <option value="balanced">Balanced Eating</option>
+          <option value="highProtein">High Protein</option>
+          <option value="weightLoss">Weight Loss</option>
+          <option value="budget">Lowest Cost</option>
+        </select>
+
+        <label for="days">Number of Days</label>
+        <select id="days">
+          <option value="3">3</option>
+          <option value="5">5</option>
+          <option value="7" selected>7</option>
+        </select>
+
+        <label for="diet">Diet Preference</label>
+        <select id="diet">
+          <option value="all" selected>No Restriction</option>
+          <option value="vegetarian">Vegetarian</option>
+        </select>
+
+        <label for="proteinTarget">Daily Protein Target (g)</label>
+        <input type="number" id="proteinTarget" min="20" step="5" value="90" />
+
+        <div class="action-group">
+          <button type="button" class="btn btn-primary" id="generateBtn">Generate Weekly Plan</button>
+          <button type="button" class="btn btn-secondary" id="downloadBtn">Download PDF Plan</button>
+        </div>
+
+        <div id="plannerNotes" class="alert-warning" role="alert" aria-live="polite" hidden>
+          <strong class="alert-title">Planner note</strong>
+          <div id="plannerNotesText"></div>
+        </div>
+      </aside>
+
+      <section>
+        <div id="summary"></div>
+
+        <div class="grid-top">
+          <div class="grocery-card">
+            <h3>Grocery List</h3>
+            <div id="groceryList" class="grocery-list"></div>
+          </div>
+
+          <div class="nutrition-card">
+            <h3>Nutrition Summary</h3>
+            <div id="nutritionSummary" class="nutrition-grid"></div>
+          </div>
+        </div>
+
+        <div id="daysGrid" class="days-grid"></div>
+      </section>
+    </div>
+  </main>
+  <button id="scrollTopBtn" class="uofg-back-to-top" type="button" aria-label="Back to top">
+    <span class="sr-only">Back to top</span>
+    <svg aria-hidden="true" focusable="false" viewBox="0 0 512 512">
+      <path fill="currentColor" d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z"></path>
+    </svg>
+  </button>
+  <uofg-footer></uofg-footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
