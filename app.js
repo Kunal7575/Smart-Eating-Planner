@@ -1007,15 +1007,7 @@ function generatePlanner() {
 
   latestPlanText = createDownloadText(week, groceryItems, totals, budget);
 
-  if (totals.cost > budget) {
-    showPlannerNote(
-      `This plan is over budget by $${(totals.cost - budget).toFixed(2)}. Try the "Lowest Cost" goal or a vegetarian plan.`
-    );
-  } else {
-    showPlannerNote(
-      `Good news: this plan is within budget by $${(budget - totals.cost).toFixed(2)}.`
-    );
-  }
+  showPlannerNote(totals.cost, budget);
 }
 function initBackToTop() {
   const scrollTopBtn = document.getElementById("scrollTopBtn");
@@ -1028,7 +1020,6 @@ function initBackToTop() {
       scrollTopBtn.classList.remove("show");
     }
   }
-
   scrollTopBtn.addEventListener("click", () => {
     window.scrollTo({
       top: 0,
@@ -1066,3 +1057,28 @@ document.getElementById("generateBtn").addEventListener("click", generatePlanner
 document.getElementById("downloadBtn").addEventListener("click", downloadPlan);
 
 loadFoodData();
+function showPlannerNote(totalCost, budget) {
+  const plannerNotes = document.getElementById("plannerNotes");
+  const plannerNotesText = document.getElementById("plannerNotesText");
+
+  plannerNotes.hidden = false;
+  plannerNotes.classList.remove("alert-success", "alert-equal", "alert-danger");
+
+  const roundedTotal = Math.round(totalCost * 100) / 100;
+  const roundedBudget = Math.round(budget * 100) / 100;
+  const difference = Math.round((roundedBudget - roundedTotal) * 100) / 100;
+
+  if (roundedTotal < roundedBudget) {
+    plannerNotes.classList.add("alert-success");
+    plannerNotesText.textContent =
+      `Good news. This plan is under budget by $${difference.toFixed(2)}.`;
+  } else if (roundedTotal === roundedBudget) {
+    plannerNotes.classList.add("alert-equal");
+    plannerNotesText.textContent =
+      `This plan matches your budget exactly at $${roundedBudget.toFixed(2)}.`;
+  } else {
+    plannerNotes.classList.add("alert-danger");
+    plannerNotesText.textContent =
+      `This plan is over budget by $${Math.abs(difference).toFixed(2)}. Try the "Lowest Cost" goal or a vegetarian plan.`;
+  }
+}
