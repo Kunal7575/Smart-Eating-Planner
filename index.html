@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Smart Eating Planner v2</title>
+  <title>Smart Eating Planner</title>
 
   <!-- U of G required fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -429,15 +429,39 @@
       font-family: "DM Sans", Arial, sans-serif;
     }
 
-    .alert-warning {
-      background: var(--warning-bg);
-      color: var(--warning-text);
-      border: 1px solid var(--warning-border);
+    .alert-note {
       border-radius: 1.2rem;
       padding: 1.4rem;
       margin-top: 1.2rem;
       font-size: 1.4rem;
       font-family: "DM Sans", Arial, sans-serif;
+      border: 1px solid transparent;
+    }
+
+    .alert-note .alert-title {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 1.5rem;
+      color: inherit;
+      font-weight: 700;
+    }
+
+    .alert-success {
+      background: var(--uog-color-green, #3c8c3a);
+      color: var(--uog-color-green-contrast, #fff);
+      border-color: var(--uog-color-green-focus, #2f6f2e);
+    }
+
+    .alert-equal {
+      background: var(--uog-color-yellow, #ffc429);
+      color: var(--uog-color-yellow-contrast, #000);
+      border-color: var(--uog-color-yellow-focus, #e0ac00);
+    }
+
+    .alert-danger {
+      background: var(--uog-color-red, #e51937);
+      color: var(--uog-color-red-contrast, #fff);
+      border-color: var(--uog-color-red-focus, #b5122b);
     }
 
     .alert-title {
@@ -551,7 +575,7 @@
           <button type="button" class="btn btn-secondary" id="downloadBtn">Download PDF Plan</button>
         </div>
 
-        <div id="plannerNotes" class="alert-warning" role="alert" aria-live="polite" hidden>
+        <div id="plannerNotes" class="alert-note" role="alert" aria-live="polite" hidden>
           <strong class="alert-title">Planner note</strong>
           <div id="plannerNotesText"></div>
         </div>
