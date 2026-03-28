@@ -185,17 +185,17 @@
     .container {
       position: relative;
       z-index: 1;
-      max-width: 1020px;
+      max-width: 1320px;
       width: 100%;
       margin: 0 auto;
-      padding: 0 18px;
+      padding: 0 24px;
     }
     .page {
       padding: 44px 0 40px;
     }
 
     .page-title {
-      margin: 0 0 18px;
+      margin: 0 0 10px;
       font-family: "Bitter", serif;
       font-size: 4.8rem;
       line-height: 1.1;
@@ -380,21 +380,21 @@
     } */
     .layout {
       display: grid;
-      grid-template-columns: 30rem 1fr;
-      gap: 1.8rem;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 24px;
       align-items: start;
     }
     .grid-top {
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 1.8rem;
-      margin-bottom: 1.8rem;
+      grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+      gap: 24px;
+      margin-bottom: 24px;
     }
 
     .days-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(29rem, 1fr));
-      gap: 1.6rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
     }
 
     .day-card {
@@ -618,7 +618,7 @@
 
     @media (max-width: 640px) {
       .page {
-        padding: 24px 0 36px;
+        padding: 36px 0 40px;
       }
 
       .page-title {
